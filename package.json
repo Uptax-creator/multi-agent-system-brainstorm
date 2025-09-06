@@ -1,0 +1,31 @@
+{
+  "name": "multi-agent-system-brainstorm",
+  "version": "1.0.0",
+  "description": "MVP Multi-Agent System with n8n",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:schemas": "jest --testPathPattern=schemas",
+    "test:agents": "jest --testPathPattern=agents",
+    "validate": "node scripts/validate-schemas.js",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "multi-agent",
+    "n8n",
+    "ai",
+    "automation",
+    "workflow"
+  ],
+  "author": "Uptax Team",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "eslint": "^8.0.0",
+    "ajv": "^8.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.0.0",
+    "dotenv": "^16.0.0"
+  }
+}
