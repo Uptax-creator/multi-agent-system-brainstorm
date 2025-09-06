@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/research-agent",
+  "title": "Research Agent Schema",
+  "description": "Schema for Research Agent operations following Anthropic patterns",
+  "version": "1.0.0",
+  
+  "type": "object",
+  
+  "properties": {
+    "request": {
+      "type": "object",
+      "required": ["task", "context", "constraints"],
+      "properties": {
+        "task": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 500,
+          "description": "Clear research task description"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "domain": {
+              "type": "string",
+              "description": "Research domain or field"
+            },
+            "scope": {
+              "type": "string",
+              "enum": ["narrow", "moderate", "broad", "comprehensive"],
+              "default": "moderate"
+            },
+            "time_frame": {
+              "type": "object",
+              "properties": {
+                "start": {"type": "string", "format": "date"},
+                "end": {"type": "string", "format": "date"}
+              }
+            },
+            "sources_preference": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["academic", "industry", "news", "documentation", "forums", "social"]
+              }
+            },
+            "exclude_sources": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "max_sources": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            },
+            "max_time_ms": {
+              "type": "integer",
+              "minimum": 1000,
+              "maximum": 300000,
+              "default": 30000
+            },
+            "quality_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "default": 0.7
+            },
+            "language": {
+              "type": "array",
+              "items": {"type": "string"},
+              "default": ["en", "pt"]
+            }
+          }
+        }
+      }
+    },
+    
+    "response": {
+      "type": "object",
+      "required": ["findings", "citations", "confidence"],
+      "properties": {
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "summary", "relevance_score", "source_id"],
+            "properties": {
+              "title": {
+                "type": "string",
+                "description": "Finding title"
+              },
+              "summary": {
+                "type": "string",
+                "maxLength": 1000,
+                "description": "Concise summary of the finding"
+              },
+              "details": {
+                "type": "string",
+                "description": "Detailed information"
+              },
+              "relevance_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              },
+              "source_id": {
+                "type": "string",
+                "description": "Reference to citation"
+              },
+              "key_points": {
+                "type": "array",
+                "items": {"type": "string"},
+                "maxItems": 5
+              },
+              "entities": {
+                "type": "object",
+                "properties": {
+                  "people": {"type": "array", "items": {"type": "string"}},
+                  "organizations": {"type": "array", "items": {"type": "string"}},
+                  "technologies": {"type": "array", "items": {"type": "string"}},
+                  "locations": {"type": "array", "items": {"type": "string"}}
+                }
+              }
+            }
+          }
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "title", "url", "type"],
+            "properties": {
+              "id": {"type": "string"},
+              "title": {"type": "string"},
+              "url": {"type": "string", "format": "uri"},
+              "author": {"type": "string"},
+              "date": {"type": "string", "format": "date"},
+              "type": {
+                "type": "string",
+                "enum": ["article", "paper", "documentation", "blog", "video", "forum", "other"]
+              },
+              "credibility_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            }
+          }
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Overall confidence in research findings"
+        },
+        "gaps": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Identified knowledge gaps"
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Recommended follow-up research"
+        },
+        "summary": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Executive summary of all findings"
+        }
+      }
+    }
+  }
+}
