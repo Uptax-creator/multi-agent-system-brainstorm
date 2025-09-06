@@ -1,0 +1,922 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/agents/assembly-agent-schema",
+  "title": "Assembly Agent Schema",
+  "description": "Schema for Assembly/Aggregation Agent input/output",
+  "type": "object",
+  
+  "definitions": {
+    "assembly_input": {
+      "type": "object",
+      "properties": {
+        "request_context": {
+          "type": "object",
+          "properties": {
+            "original_query": {
+              "type": "string",
+              "description": "Original user query"
+            },
+            "project_id": {
+              "type": "string",
+              "description": "Project identifier"
+            },
+            "session_id": {
+              "type": "string",
+              "description": "Session identifier"
+            },
+            "objectives": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Project objectives"
+            },
+            "constraints": {
+              "type": "object",
+              "description": "Project constraints"
+            },
+            "preferences": {
+              "type": "object",
+              "description": "User preferences"
+            }
+          },
+          "required": ["original_query", "project_id", "session_id"]
+        },
+        "agent_outputs": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "agent_id": {
+                "type": "string",
+                "enum": ["research_agent", "architect_agent", "ux_ui_agent", "test_agent"],
+                "description": "Agent identifier"
+              },
+              "execution_time": {
+                "type": "integer",
+                "description": "Execution time in milliseconds"
+              },
+              "confidence_score": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1,
+                "description": "Agent's confidence in output"
+              },
+              "status": {
+                "type": "string",
+                "enum": ["completed", "partial", "failed"],
+                "description": "Execution status"
+              },
+              "output_data": {
+                "type": "object",
+                "description": "Agent-specific output data"
+              },
+              "metadata": {
+                "type": "object",
+                "properties": {
+                  "tokens_used": {
+                    "type": "integer"
+                  },
+                  "api_calls": {
+                    "type": "integer"
+                  },
+                  "cache_hits": {
+                    "type": "integer"
+                  },
+                  "version": {
+                    "type": "string"
+                  }
+                }
+              },
+              "errors": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "severity": {
+                      "type": "string",
+                      "enum": ["warning", "error", "critical"]
+                    }
+                  },
+                  "required": ["code", "message", "severity"]
+                }
+              }
+            },
+            "required": ["agent_id", "status", "output_data"]
+          },
+          "description": "Outputs from all agents"
+        },
+        "aggregation_strategy": {
+          "type": "object",
+          "properties": {
+            "method": {
+              "type": "string",
+              "enum": ["weighted", "consensus", "hierarchical", "majority", "expert"],
+              "description": "Aggregation method"
+            },
+            "weights": {
+              "type": "object",
+              "properties": {
+                "research_agent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "architect_agent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "ux_ui_agent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "test_agent": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              },
+              "description": "Agent weights for weighted aggregation"
+            },
+            "conflict_resolution": {
+              "type": "string",
+              "enum": ["vote", "priority", "expert", "manual"],
+              "description": "How to resolve conflicts"
+            },
+            "quality_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Minimum quality threshold"
+            }
+          },
+          "required": ["method"]
+        },
+        "output_requirements": {
+          "type": "object",
+          "properties": {
+            "format": {
+              "type": "string",
+              "enum": ["detailed", "summary", "executive", "technical"],
+              "description": "Output format preference"
+            },
+            "include_sections": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "executive_summary",
+                  "research_findings",
+                  "architecture",
+                  "design",
+                  "testing",
+                  "implementation_plan",
+                  "risks",
+                  "recommendations",
+                  "appendices"
+                ]
+              },
+              "description": "Sections to include"
+            },
+            "max_length": {
+              "type": "integer",
+              "description": "Maximum report length in words"
+            },
+            "language": {
+              "type": "string",
+              "description": "Output language"
+            },
+            "technical_level": {
+              "type": "string",
+              "enum": ["non-technical", "basic", "intermediate", "advanced", "expert"],
+              "description": "Technical complexity level"
+            }
+          }
+        }
+      },
+      "required": ["request_context", "agent_outputs"]
+    },
+    
+    "assembly_output": {
+      "type": "object",
+      "properties": {
+        "final_report": {
+          "type": "object",
+          "properties": {
+            "report_id": {
+              "type": "string",
+              "pattern": "^report-[0-9a-f-]+$"
+            },
+            "generated_at": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "version": {
+              "type": "string"
+            },
+            "executive_summary": {
+              "type": "object",
+              "properties": {
+                "overview": {
+                  "type": "string",
+                  "description": "High-level project overview"
+                },
+                "key_decisions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "decision": {
+                        "type": "string"
+                      },
+                      "rationale": {
+                        "type": "string"
+                      },
+                      "impact": {
+                        "type": "string"
+                      },
+                      "alternatives_considered": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "required": ["decision", "rationale"]
+                  }
+                },
+                "success_metrics": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "metric": {
+                        "type": "string"
+                      },
+                      "target": {
+                        "type": "string"
+                      },
+                      "measurement_method": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["metric", "target"]
+                  }
+                },
+                "timeline": {
+                  "type": "object",
+                  "properties": {
+                    "estimated_duration": {
+                      "type": "string"
+                    },
+                    "key_milestones": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "milestone": {
+                            "type": "string"
+                          },
+                          "target_date": {
+                            "type": "string",
+                            "format": "date"
+                          },
+                          "deliverables": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": ["milestone", "target_date"]
+                      }
+                    }
+                  }
+                },
+                "budget_estimate": {
+                  "type": "object",
+                  "properties": {
+                    "development": {
+                      "type": "number"
+                    },
+                    "infrastructure": {
+                      "type": "number"
+                    },
+                    "maintenance": {
+                      "type": "number"
+                    },
+                    "total": {
+                      "type": "number"
+                    },
+                    "currency": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "required": ["overview", "key_decisions"]
+            },
+            "synthesized_findings": {
+              "type": "object",
+              "properties": {
+                "research_insights": {
+                  "type": "object",
+                  "properties": {
+                    "market_analysis": {
+                      "type": "string"
+                    },
+                    "competitive_landscape": {
+                      "type": "string"
+                    },
+                    "technology_trends": {
+                      "type": "string"
+                    },
+                    "user_needs": {
+                      "type": "string"
+                    },
+                    "key_opportunities": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "key_risks": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "technical_solution": {
+                  "type": "object",
+                  "properties": {
+                    "architecture_summary": {
+                      "type": "string"
+                    },
+                    "technology_stack": {
+                      "type": "object",
+                      "properties": {
+                        "frontend": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "backend": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "database": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "infrastructure": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    },
+                    "scalability_approach": {
+                      "type": "string"
+                    },
+                    "security_approach": {
+                      "type": "string"
+                    },
+                    "integration_points": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "system": {
+                            "type": "string"
+                          },
+                          "method": {
+                            "type": "string"
+                          },
+                          "purpose": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["system", "method", "purpose"]
+                      }
+                    }
+                  },
+                  "required": ["architecture_summary", "technology_stack"]
+                },
+                "user_experience": {
+                  "type": "object",
+                  "properties": {
+                    "design_approach": {
+                      "type": "string"
+                    },
+                    "key_features": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "feature": {
+                            "type": "string"
+                          },
+                          "purpose": {
+                            "type": "string"
+                          },
+                          "user_benefit": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["feature", "purpose", "user_benefit"]
+                      }
+                    },
+                    "user_journeys": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "persona": {
+                            "type": "string"
+                          },
+                          "journey": {
+                            "type": "string"
+                          },
+                          "touchpoints": {
+                            "type": "array",
+                            "items": {
+                              "type": "string"
+                            }
+                          }
+                        },
+                        "required": ["persona", "journey"]
+                      }
+                    },
+                    "accessibility_compliance": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["design_approach", "key_features"]
+                },
+                "quality_assurance": {
+                  "type": "object",
+                  "properties": {
+                    "testing_strategy": {
+                      "type": "string"
+                    },
+                    "coverage_targets": {
+                      "type": "object",
+                      "properties": {
+                        "unit": {
+                          "type": "integer"
+                        },
+                        "integration": {
+                          "type": "integer"
+                        },
+                        "e2e": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "performance_benchmarks": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "metric": {
+                            "type": "string"
+                          },
+                          "target": {
+                            "type": "string"
+                          },
+                          "critical_threshold": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["metric", "target"]
+                      }
+                    },
+                    "security_requirements": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "required": ["testing_strategy"]
+                }
+              },
+              "required": ["research_insights", "technical_solution", "user_experience", "quality_assurance"]
+            },
+            "implementation_roadmap": {
+              "type": "object",
+              "properties": {
+                "phases": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "phase_number": {
+                        "type": "integer"
+                      },
+                      "name": {
+                        "type": "string"
+                      },
+                      "objectives": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "deliverables": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "duration": {
+                        "type": "string"
+                      },
+                      "team_requirements": {
+                        "type": "object",
+                        "properties": {
+                          "roles": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "role": {
+                                  "type": "string"
+                                },
+                                "count": {
+                                  "type": "integer"
+                                },
+                                "skills": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "required": ["role", "count"]
+                            }
+                          }
+                        }
+                      },
+                      "success_criteria": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "dependencies": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        }
+                      },
+                      "risks": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "risk": {
+                              "type": "string"
+                            },
+                            "probability": {
+                              "type": "string",
+                              "enum": ["low", "medium", "high"]
+                            },
+                            "impact": {
+                              "type": "string",
+                              "enum": ["low", "medium", "high"]
+                            },
+                            "mitigation": {
+                              "type": "string"
+                            }
+                          },
+                          "required": ["risk", "probability", "impact", "mitigation"]
+                        }
+                      }
+                    },
+                    "required": [
+                      "phase_number",
+                      "name",
+                      "objectives",
+                      "deliverables",
+                      "duration"
+                    ]
+                  }
+                },
+                "critical_path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Critical path activities"
+                }
+              },
+              "required": ["phases"]
+            },
+            "risk_assessment": {
+              "type": "object",
+              "properties": {
+                "overall_risk_level": {
+                  "type": "string",
+                  "enum": ["low", "medium", "high", "critical"]
+                },
+                "risk_matrix": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "category": {
+                        "type": "string",
+                        "enum": ["technical", "business", "operational", "financial", "legal", "security"]
+                      },
+                      "risk": {
+                        "type": "string"
+                      },
+                      "probability": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "impact": {
+                        "type": "number",
+                        "minimum": 1,
+                        "maximum": 10
+                      },
+                      "risk_score": {
+                        "type": "number"
+                      },
+                      "mitigation_strategy": {
+                        "type": "string"
+                      },
+                      "contingency_plan": {
+                        "type": "string"
+                      },
+                      "owner": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "category",
+                      "risk",
+                      "probability",
+                      "impact",
+                      "mitigation_strategy"
+                    ]
+                  }
+                }
+              },
+              "required": ["overall_risk_level", "risk_matrix"]
+            },
+            "recommendations": {
+              "type": "object",
+              "properties": {
+                "immediate_actions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "action": {
+                        "type": "string"
+                      },
+                      "responsible_party": {
+                        "type": "string"
+                      },
+                      "timeline": {
+                        "type": "string"
+                      },
+                      "expected_outcome": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["action", "responsible_party", "timeline"]
+                  }
+                },
+                "long_term_considerations": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "success_factors": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "potential_pivots": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "trigger": {
+                        "type": "string"
+                      },
+                      "alternative_approach": {
+                        "type": "string"
+                      },
+                      "impact": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["trigger", "alternative_approach"]
+                  }
+                }
+              },
+              "required": ["immediate_actions", "success_factors"]
+            },
+            "appendices": {
+              "type": "object",
+              "properties": {
+                "detailed_research": {
+                  "type": "object"
+                },
+                "technical_specifications": {
+                  "type": "object"
+                },
+                "design_assets": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      }
+                    },
+                    "required": ["name", "type", "url"]
+                  }
+                },
+                "test_reports": {
+                  "type": "object"
+                },
+                "glossary": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "term": {
+                        "type": "string"
+                      },
+                      "definition": {
+                        "type": "string"
+                      }
+                    },
+                    "required": ["term", "definition"]
+                  }
+                },
+                "references": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "type": "string"
+                      },
+                      "author": {
+                        "type": "string"
+                      },
+                      "url": {
+                        "type": "string",
+                        "format": "uri"
+                      },
+                      "date": {
+                        "type": "string",
+                        "format": "date"
+                      }
+                    },
+                    "required": ["title"]
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "report_id",
+            "generated_at",
+            "executive_summary",
+            "synthesized_findings",
+            "implementation_roadmap",
+            "risk_assessment",
+            "recommendations"
+          ]
+        },
+        "quality_metrics": {
+          "type": "object",
+          "properties": {
+            "completeness_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "consistency_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "confidence_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "coverage": {
+              "type": "object",
+              "properties": {
+                "research": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "architecture": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "design": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "testing": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                }
+              }
+            },
+            "conflicts_resolved": {
+              "type": "integer"
+            },
+            "data_gaps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": ["completeness_score", "consistency_score", "confidence_score"]
+        },
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step": {
+                "type": "string"
+              },
+              "priority": {
+                "type": "string",
+                "enum": ["immediate", "high", "medium", "low"]
+              },
+              "owner": {
+                "type": "string"
+              },
+              "deadline": {
+                "type": "string",
+                "format": "date"
+              },
+              "dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": ["step", "priority"]
+          }
+        }
+      },
+      "required": ["final_report", "quality_metrics", "next_steps"]
+    }
+  },
+  
+  "properties": {
+    "input": {
+      "$ref": "#/definitions/assembly_input"
+    },
+    "output": {
+      "$ref": "#/definitions/assembly_output"
+    }
+  }
+}
