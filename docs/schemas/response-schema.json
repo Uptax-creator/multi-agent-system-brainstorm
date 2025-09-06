@@ -1,0 +1,336 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/response-schema",
+  "title": "Agent Response Schema",
+  "description": "Standard response format for agent communication",
+  "type": "object",
+  "allOf": [
+    {
+      "properties": {
+        "message_id": {
+          "$ref": "base-schema.json#/definitions/message_id"
+        },
+        "request_message_id": {
+          "$ref": "base-schema.json#/definitions/message_id",
+          "description": "ID of the original request"
+        },
+        "timestamp": {
+          "$ref": "base-schema.json#/definitions/timestamp"
+        },
+        "source_agent": {
+          "$ref": "base-schema.json#/definitions/agent_id",
+          "description": "Agent sending the response"
+        },
+        "status": {
+          "$ref": "base-schema.json#/definitions/status"
+        },
+        "confidence_score": {
+          "$ref": "base-schema.json#/definitions/confidence_score"
+        },
+        "metadata": {
+          "allOf": [
+            { "$ref": "base-schema.json#/definitions/metadata" },
+            {
+              "properties": {
+                "tokens_used": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Number of tokens used"
+                },
+                "model_version": {
+                  "type": "string",
+                  "description": "LLM model version used"
+                }
+              }
+            }
+          ]
+        },
+        "result": {
+          "type": "object",
+          "description": "Main response data",
+          "properties": {
+            "summary": {
+              "type": "string",
+              "description": "Brief summary of the result"
+            },
+            "data": {
+              "type": "object",
+              "description": "Agent-specific response data"
+            },
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Finding identifier"
+                  },
+                  "title": {
+                    "type": "string",
+                    "description": "Finding title"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "Detailed description"
+                  },
+                  "confidence": {
+                    "$ref": "base-schema.json#/definitions/confidence_score"
+                  },
+                  "evidence": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "Supporting evidence"
+                  },
+                  "category": {
+                    "type": "string",
+                    "description": "Finding category"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "critical"],
+                    "description": "Finding priority"
+                  }
+                },
+                "required": ["id", "title", "description"]
+              },
+              "description": "List of findings or results"
+            },
+            "recommendations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "Recommendation identifier"
+                  },
+                  "action": {
+                    "type": "string",
+                    "description": "Recommended action"
+                  },
+                  "rationale": {
+                    "type": "string",
+                    "description": "Reason for recommendation"
+                  },
+                  "priority": {
+                    "type": "string",
+                    "enum": ["low", "medium", "high", "critical"],
+                    "description": "Recommendation priority"
+                  },
+                  "effort": {
+                    "type": "string",
+                    "enum": ["trivial", "small", "medium", "large", "extra-large"],
+                    "description": "Estimated effort"
+                  }
+                },
+                "required": ["id", "action", "rationale"]
+              },
+              "description": "List of recommendations"
+            },
+            "next_steps": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Suggested next steps"
+            }
+          },
+          "required": ["summary"]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "$ref": "base-schema.json#/definitions/citation"
+          },
+          "description": "Sources and citations"
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Artifact identifier"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["code", "document", "diagram", "image", "data", "config"],
+                "description": "Artifact type"
+              },
+              "name": {
+                "type": "string",
+                "description": "Artifact name"
+              },
+              "format": {
+                "type": "string",
+                "description": "File format or MIME type"
+              },
+              "content": {
+                "type": "string",
+                "description": "Artifact content (may be base64 encoded)"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL to access the artifact"
+              },
+              "size_bytes": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "Size in bytes"
+              },
+              "checksum": {
+                "type": "string",
+                "description": "Checksum for verification"
+              }
+            },
+            "required": ["id", "type", "name"]
+          },
+          "description": "Generated artifacts"
+        },
+        "error": {
+          "$ref": "base-schema.json#/definitions/error",
+          "description": "Error information if status is 'failed'"
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string",
+                "description": "Warning code"
+              },
+              "message": {
+                "type": "string",
+                "description": "Warning message"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["info", "warning", "error"],
+                "description": "Warning severity"
+              }
+            },
+            "required": ["code", "message"]
+          },
+          "description": "Non-fatal warnings"
+        },
+        "performance_metrics": {
+          "type": "object",
+          "properties": {
+            "execution_time_ms": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total execution time"
+            },
+            "tokens_input": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Input tokens count"
+            },
+            "tokens_output": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Output tokens count"
+            },
+            "api_calls": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of API calls made"
+            },
+            "cache_hits": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of cache hits"
+            },
+            "cache_misses": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of cache misses"
+            }
+          },
+          "description": "Performance metrics"
+        }
+      },
+      "required": [
+        "message_id",
+        "request_message_id",
+        "timestamp",
+        "source_agent",
+        "status",
+        "metadata",
+        "result"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "message_id": "res-789e0123-f45g-67h8-i901-234567890123",
+      "request_message_id": "req-123e4567-e89b-12d3-a456-426614174000",
+      "timestamp": "2024-01-06T10:31:45Z",
+      "source_agent": "research_agent",
+      "status": "completed",
+      "confidence_score": 0.92,
+      "metadata": {
+        "version": "1.0.0",
+        "correlation_id": "corr-abc123",
+        "execution_time_ms": 1845,
+        "tokens_used": 1523,
+        "model_version": "claude-3-opus"
+      },
+      "result": {
+        "summary": "Completed research on multi-agent system best practices with 8 key findings",
+        "findings": [
+          {
+            "id": "finding-001",
+            "title": "Stateless Agent Design",
+            "description": "Implementing stateless agents improves scalability and reduces complexity",
+            "confidence": 0.95,
+            "evidence": [
+              "Anthropic's multi-agent architecture documentation",
+              "Microsoft AutoGen framework principles"
+            ],
+            "category": "architecture",
+            "priority": "high"
+          }
+        ],
+        "recommendations": [
+          {
+            "id": "rec-001",
+            "action": "Implement centralized state management",
+            "rationale": "Centralized state allows for better consistency and easier debugging",
+            "priority": "high",
+            "effort": "medium"
+          }
+        ],
+        "next_steps": [
+          "Design state management architecture",
+          "Define agent communication protocols",
+          "Implement message validation"
+        ]
+      },
+      "citations": [
+        {
+          "source": "Anthropic Engineering Blog",
+          "url": "https://www.anthropic.com/engineering/multi-agent-research-system",
+          "title": "Building a Multi-Agent Research System",
+          "author": "Anthropic Team",
+          "date": "2024-01-01",
+          "relevance_score": 0.98
+        }
+      ],
+      "performance_metrics": {
+        "execution_time_ms": 1845,
+        "tokens_input": 523,
+        "tokens_output": 1000,
+        "api_calls": 3,
+        "cache_hits": 1,
+        "cache_misses": 2
+      }
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/request-schema",
+  "title": "Agent Request Schema",
+  "description": "Standard request format for agent communication",
+  "type": "object",
+  "allOf": [
+    {
+      "properties": {
+        "message_id": {
+          "$ref": "base-schema.json#/definitions/message_id"
+        },
+        "timestamp": {
+          "$ref": "base-schema.json#/definitions/timestamp"
+        },
+        "source_agent": {
+          "$ref": "base-schema.json#/definitions/agent_id",
+          "description": "Agent making the request"
+        },
+        "target_agent": {
+          "$ref": "base-schema.json#/definitions/agent_id",
+          "description": "Agent receiving the request"
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "analyze",
+            "design",
+            "research",
+            "test",
+            "validate",
+            "aggregate",
+            "decompose",
+            "delegate"
+          ],
+          "description": "Action to be performed"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["low", "medium", "high", "critical"],
+          "default": "medium",
+          "description": "Request priority level"
+        },
+        "context": {
+          "$ref": "base-schema.json#/definitions/context"
+        },
+        "metadata": {
+          "$ref": "base-schema.json#/definitions/metadata"
+        },
+        "payload": {
+          "type": "object",
+          "description": "Request-specific data",
+          "properties": {
+            "task": {
+              "type": "string",
+              "description": "Task description"
+            },
+            "requirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "List of requirements"
+            },
+            "constraints": {
+              "type": "object",
+              "description": "Task-specific constraints"
+            },
+            "input_data": {
+              "type": "object",
+              "description": "Input data for processing"
+            },
+            "expected_output_format": {
+              "type": "object",
+              "description": "Expected format of the response"
+            }
+          },
+          "required": ["task"]
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message_id": {
+                "$ref": "base-schema.json#/definitions/message_id"
+              },
+              "agent_id": {
+                "$ref": "base-schema.json#/definitions/agent_id"
+              },
+              "required": {
+                "type": "boolean",
+                "default": true,
+                "description": "Whether this dependency is required"
+              }
+            },
+            "required": ["message_id", "agent_id"]
+          },
+          "description": "Dependencies on other agent outputs"
+        },
+        "callback": {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Callback URL for async responses"
+            },
+            "method": {
+              "type": "string",
+              "enum": ["POST", "PUT", "PATCH"],
+              "default": "POST",
+              "description": "HTTP method for callback"
+            },
+            "headers": {
+              "type": "object",
+              "description": "Additional headers for callback"
+            }
+          },
+          "required": ["url"]
+        }
+      },
+      "required": [
+        "message_id",
+        "timestamp",
+        "source_agent",
+        "target_agent",
+        "action",
+        "context",
+        "metadata",
+        "payload"
+      ]
+    }
+  ],
+  "examples": [
+    {
+      "message_id": "req-123e4567-e89b-12d3-a456-426614174000",
+      "timestamp": "2024-01-06T10:30:00Z",
+      "source_agent": "lead_agent",
+      "target_agent": "research_agent",
+      "action": "research",
+      "priority": "high",
+      "context": {
+        "session_id": "session-abc123",
+        "user_id": "user-xyz789",
+        "project_id": "proj-brainstorm-001",
+        "environment": "production",
+        "constraints": {
+          "max_tokens": 2000,
+          "timeout_ms": 30000,
+          "temperature": 0.7
+        }
+      },
+      "metadata": {
+        "version": "1.0.0",
+        "correlation_id": "corr-abc123"
+      },
+      "payload": {
+        "task": "Research best practices for multi-agent system design",
+        "requirements": [
+          "Focus on scalability",
+          "Include recent developments (2023-2024)",
+          "Provide citations"
+        ],
+        "constraints": {
+          "sources_limit": 10,
+          "min_confidence": 0.8
+        }
+      }
+    }
+  ]
+}

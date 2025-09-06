@@ -1,0 +1,180 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/base-schema",
+  "title": "Multi-Agent System Base Schema",
+  "description": "Base schema for multi-agent communication following Anthropic patterns",
+  "type": "object",
+  "definitions": {
+    "message_id": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9-]+$",
+      "description": "Unique identifier for the message"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp"
+    },
+    "agent_id": {
+      "type": "string",
+      "enum": [
+        "lead_agent",
+        "research_agent",
+        "architect_agent",
+        "ux_ui_agent",
+        "test_agent",
+        "assembly_agent"
+      ],
+      "description": "Identifier of the agent"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "processing", "completed", "failed", "cancelled"],
+      "description": "Current status of the operation"
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Confidence level of the output (0-1)"
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Human-readable error message"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional error details"
+        }
+      },
+      "required": ["code", "message"]
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+          "description": "Schema version (semantic versioning)"
+        },
+        "correlation_id": {
+          "type": "string",
+          "description": "ID to correlate related messages"
+        },
+        "parent_message_id": {
+          "type": "string",
+          "description": "ID of the parent message"
+        },
+        "execution_time_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Execution time in milliseconds"
+        },
+        "retry_count": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0,
+          "description": "Number of retry attempts"
+        }
+      },
+      "required": ["version"]
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "session_id": {
+          "type": "string",
+          "description": "Session identifier"
+        },
+        "user_id": {
+          "type": "string",
+          "description": "User identifier"
+        },
+        "project_id": {
+          "type": "string",
+          "description": "Project identifier"
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["development", "staging", "production"],
+          "description": "Execution environment"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "max_tokens": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Maximum tokens for response"
+            },
+            "timeout_ms": {
+              "type": "integer",
+              "minimum": 100,
+              "description": "Timeout in milliseconds"
+            },
+            "temperature": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2,
+              "description": "LLM temperature setting"
+            }
+          }
+        },
+        "previous_interactions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message_id": { "$ref": "#/definitions/message_id" },
+              "agent_id": { "$ref": "#/definitions/agent_id" },
+              "summary": { "type": "string" }
+            }
+          },
+          "description": "History of previous interactions"
+        }
+      },
+      "required": ["session_id"]
+    },
+    "citation": {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "description": "Source of the information"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL of the source"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the source"
+        },
+        "author": {
+          "type": "string",
+          "description": "Author of the source"
+        },
+        "date": {
+          "type": "string",
+          "format": "date",
+          "description": "Publication date"
+        },
+        "relevance_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Relevance score (0-1)"
+        }
+      },
+      "required": ["source"]
+    }
+  }
+}
