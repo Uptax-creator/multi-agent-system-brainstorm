@@ -1,0 +1,781 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Test Agent Schema",
+  "description": "Comprehensive testing and quality assurance agent for validating all system components",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_type": { "const": "test_agent" },
+        "version": { "type": "string", "default": "1.0.0" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "task_id": { "type": "string" },
+        "test_run_id": { "type": "string", "format": "uuid" },
+        "environment": { 
+          "enum": ["development", "staging", "production", "ci"] 
+        }
+      },
+      "required": ["agent_type", "version", "timestamp", "task_id", "test_run_id"]
+    },
+    
+    "tools_and_frameworks": {
+      "type": "object",
+      "description": "Testing tools and frameworks available to the agent",
+      "properties": {
+        "unit_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "language": { "type": "string" },
+              "features": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Jest",
+              "language": "JavaScript/TypeScript",
+              "features": ["snapshot_testing", "mocking", "coverage", "watch_mode"]
+            },
+            {
+              "name": "Vitest",
+              "language": "JavaScript/TypeScript",
+              "features": ["vite_integration", "fast_execution", "typescript_native"]
+            },
+            {
+              "name": "React Testing Library",
+              "language": "React",
+              "features": ["user_centric", "accessibility", "best_practices"]
+            },
+            {
+              "name": "Pytest",
+              "language": "Python",
+              "features": ["fixtures", "parametrization", "plugins"]
+            },
+            {
+              "name": "Mocha",
+              "language": "JavaScript",
+              "features": ["flexible", "async_support", "browser_compatible"]
+            }
+          ]
+        },
+        
+        "e2e_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "capabilities": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Playwright",
+              "type": "modern_e2e",
+              "capabilities": ["multi_browser", "auto_wait", "network_interception", "mobile_emulation"]
+            },
+            {
+              "name": "Cypress",
+              "type": "developer_friendly",
+              "capabilities": ["time_travel", "real_browser", "automatic_retry", "visual_debugging"]
+            },
+            {
+              "name": "Puppeteer",
+              "type": "headless_chrome",
+              "capabilities": ["chrome_automation", "pdf_generation", "performance_testing"]
+            },
+            {
+              "name": "Selenium",
+              "type": "cross_browser",
+              "capabilities": ["grid_support", "multiple_languages", "legacy_support"]
+            },
+            {
+              "name": "WebdriverIO",
+              "type": "flexible",
+              "capabilities": ["multiple_protocols", "mobile_testing", "extensive_plugins"]
+            }
+          ]
+        },
+        
+        "api_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "features": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Postman/Newman",
+              "features": ["collection_runner", "environment_variables", "assertions", "ci_integration"]
+            },
+            {
+              "name": "REST Assured",
+              "features": ["java_based", "bdd_syntax", "schema_validation"]
+            },
+            {
+              "name": "Supertest",
+              "features": ["express_integration", "fluent_api", "jest_compatible"]
+            },
+            {
+              "name": "Insomnia",
+              "features": ["graphql_support", "plugin_system", "environment_management"]
+            },
+            {
+              "name": "Pact",
+              "features": ["contract_testing", "consumer_driven", "language_agnostic"]
+            }
+          ]
+        },
+        
+        "performance_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "metrics": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Lighthouse",
+              "type": "web_performance",
+              "metrics": ["performance_score", "accessibility", "best_practices", "seo", "pwa"]
+            },
+            {
+              "name": "K6",
+              "type": "load_testing",
+              "metrics": ["throughput", "response_time", "error_rate", "concurrent_users"]
+            },
+            {
+              "name": "JMeter",
+              "type": "load_testing",
+              "metrics": ["latency", "throughput", "deviation", "percentiles"]
+            },
+            {
+              "name": "WebPageTest",
+              "type": "real_user_monitoring",
+              "metrics": ["speed_index", "time_to_interactive", "first_contentful_paint"]
+            },
+            {
+              "name": "Artillery",
+              "type": "load_testing",
+              "metrics": ["requests_per_second", "response_times", "error_rates"]
+            }
+          ]
+        },
+        
+        "accessibility_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "standards": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "axe-core",
+              "standards": ["WCAG_2.1", "Section_508", "EN_301_549"]
+            },
+            {
+              "name": "Pa11y",
+              "standards": ["WCAG_2.1_A", "WCAG_2.1_AA", "WCAG_2.1_AAA"]
+            },
+            {
+              "name": "WAVE",
+              "standards": ["WCAG", "best_practices"]
+            },
+            {
+              "name": "Lighthouse Accessibility",
+              "standards": ["WCAG_2.1", "ARIA"]
+            }
+          ]
+        },
+        
+        "security_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "checks": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "OWASP ZAP",
+              "type": "vulnerability_scanner",
+              "checks": ["sql_injection", "xss", "csrf", "security_headers"]
+            },
+            {
+              "name": "Snyk",
+              "type": "dependency_scanner",
+              "checks": ["vulnerable_dependencies", "license_issues", "code_quality"]
+            },
+            {
+              "name": "ESLint Security Plugin",
+              "type": "static_analysis",
+              "checks": ["code_injection", "regex_dos", "unsafe_eval"]
+            },
+            {
+              "name": "Burp Suite",
+              "type": "penetration_testing",
+              "checks": ["authentication", "authorization", "session_management"]
+            }
+          ]
+        },
+        
+        "visual_testing": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "capabilities": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Percy",
+              "capabilities": ["visual_regression", "responsive_testing", "cross_browser"]
+            },
+            {
+              "name": "Chromatic",
+              "capabilities": ["storybook_integration", "ui_review", "visual_regression"]
+            },
+            {
+              "name": "BackstopJS",
+              "capabilities": ["visual_regression", "responsive", "docker_support"]
+            },
+            {
+              "name": "Applitools",
+              "capabilities": ["ai_powered", "cross_platform", "root_cause_analysis"]
+            }
+          ]
+        },
+        
+        "code_quality": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "metrics": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "SonarQube",
+              "type": "static_analysis",
+              "metrics": ["code_coverage", "duplications", "complexity", "security_hotspots"]
+            },
+            {
+              "name": "ESLint",
+              "type": "linting",
+              "metrics": ["code_style", "best_practices", "potential_errors"]
+            },
+            {
+              "name": "Prettier",
+              "type": "formatting",
+              "metrics": ["consistency", "readability"]
+            },
+            {
+              "name": "CodeClimate",
+              "type": "maintainability",
+              "metrics": ["technical_debt", "test_coverage", "duplication"]
+            }
+          ]
+        }
+      }
+    },
+    
+    "input": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "type": "object",
+          "properties": {
+            "type": { 
+              "enum": ["ui_component", "api_endpoint", "function", "module", "service", "workflow", "full_application"] 
+            },
+            "name": { "type": "string" },
+            "source_code": { "type": "string" },
+            "dependencies": { "type": "array", "items": { "type": "string" } },
+            "documentation": { "type": "string" },
+            "requirements": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": ["type", "name", "source_code"]
+        },
+        
+        "test_configuration": {
+          "type": "object",
+          "properties": {
+            "test_types": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "unit", 
+                  "integration", 
+                  "e2e", 
+                  "performance", 
+                  "accessibility", 
+                  "security", 
+                  "visual", 
+                  "api", 
+                  "smoke", 
+                  "regression",
+                  "contract",
+                  "mutation"
+                ]
+              }
+            },
+            "coverage_threshold": {
+              "type": "object",
+              "properties": {
+                "statements": { "type": "number", "minimum": 0, "maximum": 100 },
+                "branches": { "type": "number", "minimum": 0, "maximum": 100 },
+                "functions": { "type": "number", "minimum": 0, "maximum": 100 },
+                "lines": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "performance_budget": {
+              "type": "object",
+              "properties": {
+                "response_time_ms": { "type": "number" },
+                "bundle_size_kb": { "type": "number" },
+                "lighthouse_score": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "browsers": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "devices": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "test_data": {
+              "type": "object",
+              "properties": {
+                "fixtures": { "type": "array", "items": { "type": "object" } },
+                "mocks": { "type": "array", "items": { "type": "object" } },
+                "seeds": { "type": "array", "items": { "type": "object" } }
+              }
+            }
+          },
+          "required": ["test_types"]
+        },
+        
+        "acceptance_criteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "description": { "type": "string" },
+              "type": { "enum": ["functional", "non_functional", "business"] },
+              "priority": { "enum": ["critical", "high", "medium", "low"] }
+            }
+          }
+        },
+        
+        "previous_test_results": {
+          "type": "object",
+          "properties": {
+            "last_run": { "type": "string", "format": "date-time" },
+            "passed": { "type": "integer" },
+            "failed": { "type": "integer" },
+            "skipped": { "type": "integer" },
+            "known_issues": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      },
+      "required": ["component", "test_configuration"]
+    },
+    
+    "output": {
+      "type": "object",
+      "properties": {
+        "test_suite": {
+          "type": "object",
+          "properties": {
+            "suite_id": { "type": "string" },
+            "total_tests": { "type": "integer" },
+            "test_files": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "filename": { "type": "string" },
+                  "test_type": { "type": "string" },
+                  "framework": { "type": "string" },
+                  "code": { "type": "string" },
+                  "setup": { "type": "string" },
+                  "teardown": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        
+        "test_results": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "passed": { "type": "integer" },
+                "failed": { "type": "integer" },
+                "skipped": { "type": "integer" },
+                "pending": { "type": "integer" },
+                "duration_ms": { "type": "number" },
+                "start_time": { "type": "string", "format": "date-time" },
+                "end_time": { "type": "string", "format": "date-time" }
+              }
+            },
+            
+            "detailed_results": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "test_id": { "type": "string" },
+                  "test_name": { "type": "string" },
+                  "test_type": { "type": "string" },
+                  "status": { "enum": ["passed", "failed", "skipped", "pending", "error"] },
+                  "duration_ms": { "type": "number" },
+                  "error_message": { "type": "string" },
+                  "stack_trace": { "type": "string" },
+                  "screenshots": { "type": "array", "items": { "type": "string" } },
+                  "video_url": { "type": "string" },
+                  "logs": { "type": "array", "items": { "type": "string" } },
+                  "assertions": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "description": { "type": "string" },
+                        "expected": { "type": "string" },
+                        "actual": { "type": "string" },
+                        "passed": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "coverage_report": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "object",
+              "properties": {
+                "statements": {
+                  "type": "object",
+                  "properties": {
+                    "total": { "type": "integer" },
+                    "covered": { "type": "integer" },
+                    "percentage": { "type": "number" }
+                  }
+                },
+                "branches": {
+                  "type": "object",
+                  "properties": {
+                    "total": { "type": "integer" },
+                    "covered": { "type": "integer" },
+                    "percentage": { "type": "number" }
+                  }
+                },
+                "functions": {
+                  "type": "object",
+                  "properties": {
+                    "total": { "type": "integer" },
+                    "covered": { "type": "integer" },
+                    "percentage": { "type": "number" }
+                  }
+                },
+                "lines": {
+                  "type": "object",
+                  "properties": {
+                    "total": { "type": "integer" },
+                    "covered": { "type": "integer" },
+                    "percentage": { "type": "number" }
+                  }
+                }
+              }
+            },
+            "uncovered_lines": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string" },
+                  "lines": { "type": "array", "items": { "type": "integer" } }
+                }
+              }
+            },
+            "html_report_url": { "type": "string" }
+          }
+        },
+        
+        "performance_metrics": {
+          "type": "object",
+          "properties": {
+            "lighthouse": {
+              "type": "object",
+              "properties": {
+                "performance": { "type": "number", "minimum": 0, "maximum": 100 },
+                "accessibility": { "type": "number", "minimum": 0, "maximum": 100 },
+                "best_practices": { "type": "number", "minimum": 0, "maximum": 100 },
+                "seo": { "type": "number", "minimum": 0, "maximum": 100 },
+                "pwa": { "type": "number", "minimum": 0, "maximum": 100 }
+              }
+            },
+            "web_vitals": {
+              "type": "object",
+              "properties": {
+                "lcp_ms": { "type": "number" },
+                "fid_ms": { "type": "number" },
+                "cls": { "type": "number" },
+                "ttfb_ms": { "type": "number" },
+                "fcp_ms": { "type": "number" }
+              }
+            },
+            "load_testing": {
+              "type": "object",
+              "properties": {
+                "requests_per_second": { "type": "number" },
+                "average_response_time_ms": { "type": "number" },
+                "p95_response_time_ms": { "type": "number" },
+                "p99_response_time_ms": { "type": "number" },
+                "error_rate": { "type": "number" },
+                "concurrent_users": { "type": "integer" }
+              }
+            },
+            "bundle_analysis": {
+              "type": "object",
+              "properties": {
+                "total_size_kb": { "type": "number" },
+                "js_size_kb": { "type": "number" },
+                "css_size_kb": { "type": "number" },
+                "image_size_kb": { "type": "number" },
+                "largest_modules": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": { "type": "string" },
+                      "size_kb": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "accessibility_report": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "object",
+              "properties": {
+                "score": { "type": "number", "minimum": 0, "maximum": 100 },
+                "violations": { "type": "integer" },
+                "warnings": { "type": "integer" },
+                "passed": { "type": "integer" }
+              }
+            },
+            "violations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "impact": { "enum": ["minor", "moderate", "serious", "critical"] },
+                  "description": { "type": "string" },
+                  "help_url": { "type": "string" },
+                  "nodes": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "html": { "type": "string" },
+                        "target": { "type": "string" },
+                        "failure_summary": { "type": "string" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "security_report": {
+          "type": "object",
+          "properties": {
+            "summary": {
+              "type": "object",
+              "properties": {
+                "critical": { "type": "integer" },
+                "high": { "type": "integer" },
+                "medium": { "type": "integer" },
+                "low": { "type": "integer" },
+                "info": { "type": "integer" }
+              }
+            },
+            "vulnerabilities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "id": { "type": "string" },
+                  "severity": { "enum": ["critical", "high", "medium", "low", "info"] },
+                  "type": { "type": "string" },
+                  "description": { "type": "string" },
+                  "location": { "type": "string" },
+                  "remediation": { "type": "string" },
+                  "cve": { "type": "string" },
+                  "cwe": { "type": "string" }
+                }
+              }
+            },
+            "dependency_scan": {
+              "type": "object",
+              "properties": {
+                "vulnerable_dependencies": { "type": "integer" },
+                "outdated_dependencies": { "type": "integer" },
+                "license_issues": { "type": "integer" }
+              }
+            }
+          }
+        },
+        
+        "visual_regression": {
+          "type": "object",
+          "properties": {
+            "baseline_url": { "type": "string" },
+            "comparison_url": { "type": "string" },
+            "differences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "page": { "type": "string" },
+                  "selector": { "type": "string" },
+                  "difference_percentage": { "type": "number" },
+                  "screenshot_url": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "severity": { "enum": ["blocker", "critical", "major", "minor", "trivial"] },
+              "type": { "enum": ["bug", "vulnerability", "performance", "accessibility", "code_quality"] },
+              "title": { "type": "string" },
+              "description": { "type": "string" },
+              "location": {
+                "type": "object",
+                "properties": {
+                  "file": { "type": "string" },
+                  "line": { "type": "integer" },
+                  "column": { "type": "integer" }
+                }
+              },
+              "suggested_fix": { "type": "string" },
+              "references": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        
+        "recommendations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": { "type": "string" },
+              "priority": { "enum": ["high", "medium", "low"] },
+              "recommendation": { "type": "string" },
+              "impact": { "type": "string" },
+              "effort": { "enum": ["low", "medium", "high"] }
+            }
+          }
+        },
+        
+        "test_artifacts": {
+          "type": "object",
+          "properties": {
+            "screenshots": { "type": "array", "items": { "type": "string" } },
+            "videos": { "type": "array", "items": { "type": "string" } },
+            "logs": { "type": "array", "items": { "type": "string" } },
+            "reports": {
+              "type": "object",
+              "properties": {
+                "html": { "type": "string" },
+                "json": { "type": "string" },
+                "junit_xml": { "type": "string" },
+                "lcov": { "type": "string" }
+              }
+            }
+          }
+        },
+        
+        "ci_integration": {
+          "type": "object",
+          "properties": {
+            "pipeline_config": { "type": "string" },
+            "docker_compose": { "type": "string" },
+            "github_actions": { "type": "string" },
+            "jenkins_file": { "type": "string" },
+            "gitlab_ci": { "type": "string" }
+          }
+        },
+        
+        "quality_gates": {
+          "type": "object",
+          "properties": {
+            "passed": { "type": "boolean" },
+            "criteria": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "metric": { "type": "string" },
+                  "threshold": { "type": "number" },
+                  "actual": { "type": "number" },
+                  "passed": { "type": "boolean" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "required": ["test_suite", "test_results", "coverage_report", "issues", "quality_gates"]
+    }
+  },
+  "required": ["metadata", "input", "output"]
+}
