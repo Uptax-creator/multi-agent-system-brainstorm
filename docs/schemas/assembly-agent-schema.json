@@ -1,0 +1,576 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Assembly Agent Schema",
+  "description": "Final consolidation agent that assembles all outputs into cohesive deliverables",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_type": { "const": "assembly_agent" },
+        "version": { "type": "string", "default": "1.0.0" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "task_id": { "type": "string" },
+        "project_id": { "type": "string" },
+        "assembly_run_id": { "type": "string", "format": "uuid" }
+      },
+      "required": ["agent_type", "version", "timestamp", "task_id", "project_id"]
+    },
+    
+    "tools_and_services": {
+      "type": "object",
+      "description": "Documentation and delivery tools available to the assembly agent",
+      "properties": {
+        "documentation_generators": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "formats": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Docusaurus",
+              "type": "static_site",
+              "formats": ["markdown", "mdx", "react"]
+            },
+            {
+              "name": "Storybook",
+              "type": "component_docs",
+              "formats": ["mdx", "csf", "html"]
+            },
+            {
+              "name": "JSDoc",
+              "type": "api_docs",
+              "formats": ["javascript", "typescript", "html"]
+            },
+            {
+              "name": "Swagger/OpenAPI",
+              "type": "api_spec",
+              "formats": ["yaml", "json", "html"]
+            },
+            {
+              "name": "MkDocs",
+              "type": "documentation",
+              "formats": ["markdown", "html", "pdf"]
+            },
+            {
+              "name": "Confluence",
+              "type": "wiki",
+              "formats": ["confluence_markup", "html"]
+            }
+          ]
+        },
+        
+        "delivery_platforms": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" },
+              "capabilities": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "GitHub",
+              "type": "repository",
+              "capabilities": ["version_control", "releases", "pages", "actions", "packages"]
+            },
+            {
+              "name": "GitLab",
+              "type": "repository",
+              "capabilities": ["version_control", "ci_cd", "pages", "registry"]
+            },
+            {
+              "name": "Vercel",
+              "type": "deployment",
+              "capabilities": ["preview_deployments", "edge_functions", "analytics"]
+            },
+            {
+              "name": "Netlify",
+              "type": "deployment",
+              "capabilities": ["continuous_deployment", "forms", "functions"]
+            },
+            {
+              "name": "Docker Hub",
+              "type": "container_registry",
+              "capabilities": ["image_storage", "automated_builds", "webhooks"]
+            },
+            {
+              "name": "npm",
+              "type": "package_registry",
+              "capabilities": ["package_publishing", "versioning", "dependencies"]
+            }
+          ]
+        },
+        
+        "project_management": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "integrations": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Linear",
+              "integrations": ["github", "slack", "figma", "sentry"]
+            },
+            {
+              "name": "Jira",
+              "integrations": ["confluence", "bitbucket", "slack"]
+            },
+            {
+              "name": "Notion",
+              "integrations": ["github", "slack", "figma", "google"]
+            },
+            {
+              "name": "Asana",
+              "integrations": ["slack", "github", "google", "microsoft"]
+            }
+          ]
+        },
+        
+        "communication_channels": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "type": "string" }
+            }
+          },
+          "default": [
+            {
+              "name": "Slack",
+              "type": "instant_messaging"
+            },
+            {
+              "name": "Discord",
+              "type": "instant_messaging"
+            },
+            {
+              "name": "Email",
+              "type": "async_communication"
+            },
+            {
+              "name": "Microsoft Teams",
+              "type": "collaboration"
+            }
+          ]
+        },
+        
+        "report_formats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "format": { "type": "string" },
+              "use_case": { "type": "string" },
+              "tools": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "format": "PDF",
+              "use_case": "formal_documentation",
+              "tools": ["puppeteer", "pdfkit", "wkhtmltopdf"]
+            },
+            {
+              "format": "HTML",
+              "use_case": "interactive_reports",
+              "tools": ["handlebars", "ejs", "react"]
+            },
+            {
+              "format": "Markdown",
+              "use_case": "technical_documentation",
+              "tools": ["marked", "remark", "mdx"]
+            },
+            {
+              "format": "Excel/CSV",
+              "use_case": "data_analysis",
+              "tools": ["exceljs", "csv-writer", "xlsx"]
+            },
+            {
+              "format": "JSON",
+              "use_case": "api_integration",
+              "tools": ["native", "ajv", "json-schema"]
+            }
+          ]
+        }
+      }
+    },
+    
+    "input": {
+      "type": "object",
+      "properties": {
+        "all_agent_outputs": {
+          "type": "object",
+          "properties": {
+            "research_agent": {
+              "type": "object",
+              "properties": {
+                "findings": { "type": "array", "items": { "type": "object" } },
+                "citations": { "type": "array", "items": { "type": "object" } },
+                "confidence_scores": { "type": "object" },
+                "market_analysis": { "type": "object" },
+                "user_insights": { "type": "object" }
+              }
+            },
+            "architect_agent": {
+              "type": "object",
+              "properties": {
+                "architecture": { "type": "object" },
+                "components": { "type": "array", "items": { "type": "object" } },
+                "data_flow": { "type": "object" },
+                "tech_stack": { "type": "object" },
+                "deployment_strategy": { "type": "object" }
+              }
+            },
+            "ux_ui_agent": {
+              "type": "object",
+              "properties": {
+                "design_system": { "type": "object" },
+                "wireframes": { "type": "array", "items": { "type": "object" } },
+                "components": { "type": "array", "items": { "type": "object" } },
+                "user_flows": { "type": "array", "items": { "type": "object" } },
+                "brand_identity": { "type": "object" }
+              }
+            },
+            "development_agent": {
+              "type": "object",
+              "properties": {
+                "source_code": { "type": "object" },
+                "api_endpoints": { "type": "array", "items": { "type": "object" } },
+                "database_schema": { "type": "object" },
+                "deployment_config": { "type": "object" }
+              }
+            },
+            "test_agent": {
+              "type": "object",
+              "properties": {
+                "test_results": { "type": "object" },
+                "coverage_report": { "type": "object" },
+                "performance_metrics": { "type": "object" },
+                "security_report": { "type": "object" },
+                "issues": { "type": "array", "items": { "type": "object" } }
+              }
+            }
+          },
+          "required": ["research_agent", "architect_agent", "ux_ui_agent", "test_agent"]
+        },
+        
+        "project_requirements": {
+          "type": "object",
+          "properties": {
+            "objectives": { "type": "array", "items": { "type": "string" } },
+            "scope": { "type": "string" },
+            "timeline": { "type": "string" },
+            "budget": { "type": "number" },
+            "stakeholders": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        
+        "delivery_preferences": {
+          "type": "object",
+          "properties": {
+            "report_format": { 
+              "enum": ["pdf", "html", "markdown", "confluence", "notion", "json"] 
+            },
+            "include_sections": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "executive_summary",
+                  "technical_architecture",
+                  "design_system",
+                  "implementation_guide",
+                  "test_results",
+                  "deployment_instructions",
+                  "maintenance_guide",
+                  "api_documentation",
+                  "user_manual",
+                  "release_notes"
+                ]
+              }
+            },
+            "language": { "type": "string", "default": "en" },
+            "technical_depth": { 
+              "enum": ["high_level", "detailed", "comprehensive"] 
+            }
+          }
+        },
+        
+        "quality_criteria": {
+          "type": "object",
+          "properties": {
+            "completeness_check": { "type": "boolean", "default": true },
+            "consistency_validation": { "type": "boolean", "default": true },
+            "citation_verification": { "type": "boolean", "default": true },
+            "grammar_check": { "type": "boolean", "default": true }
+          }
+        }
+      },
+      "required": ["all_agent_outputs", "project_requirements", "delivery_preferences"]
+    },
+    
+    "output": {
+      "type": "object",
+      "properties": {
+        "final_report": {
+          "type": "object",
+          "properties": {
+            "metadata": {
+              "type": "object",
+              "properties": {
+                "title": { "type": "string" },
+                "version": { "type": "string" },
+                "date": { "type": "string", "format": "date" },
+                "authors": { "type": "array", "items": { "type": "string" } },
+                "reviewers": { "type": "array", "items": { "type": "string" } },
+                "status": { "enum": ["draft", "review", "approved", "published"] }
+              }
+            },
+            
+            "executive_summary": {
+              "type": "object",
+              "properties": {
+                "overview": { "type": "string" },
+                "key_findings": { "type": "array", "items": { "type": "string" } },
+                "recommendations": { "type": "array", "items": { "type": "string" } },
+                "risks": { "type": "array", "items": { "type": "object" } },
+                "timeline": { "type": "string" },
+                "budget_summary": { "type": "object" }
+              }
+            },
+            
+            "technical_documentation": {
+              "type": "object",
+              "properties": {
+                "architecture_overview": { "type": "string" },
+                "system_design": { "type": "object" },
+                "api_specification": { "type": "object" },
+                "database_design": { "type": "object" },
+                "security_architecture": { "type": "object" },
+                "deployment_architecture": { "type": "object" },
+                "integration_points": { "type": "array", "items": { "type": "object" } }
+              }
+            },
+            
+            "design_documentation": {
+              "type": "object",
+              "properties": {
+                "design_principles": { "type": "array", "items": { "type": "string" } },
+                "brand_guidelines": { "type": "object" },
+                "component_library": { "type": "object" },
+                "style_guide": { "type": "object" },
+                "accessibility_guidelines": { "type": "object" },
+                "responsive_design": { "type": "object" }
+              }
+            },
+            
+            "implementation_guide": {
+              "type": "object",
+              "properties": {
+                "setup_instructions": { "type": "array", "items": { "type": "string" } },
+                "development_workflow": { "type": "object" },
+                "coding_standards": { "type": "object" },
+                "git_workflow": { "type": "object" },
+                "ci_cd_pipeline": { "type": "object" },
+                "environment_configs": { "type": "object" }
+              }
+            },
+            
+            "quality_assurance": {
+              "type": "object",
+              "properties": {
+                "test_strategy": { "type": "object" },
+                "test_results_summary": { "type": "object" },
+                "coverage_metrics": { "type": "object" },
+                "performance_benchmarks": { "type": "object" },
+                "security_assessment": { "type": "object" },
+                "accessibility_audit": { "type": "object" }
+              }
+            },
+            
+            "deployment_guide": {
+              "type": "object",
+              "properties": {
+                "prerequisites": { "type": "array", "items": { "type": "string" } },
+                "deployment_steps": { "type": "array", "items": { "type": "object" } },
+                "rollback_procedure": { "type": "array", "items": { "type": "string" } },
+                "monitoring_setup": { "type": "object" },
+                "scaling_strategy": { "type": "object" },
+                "disaster_recovery": { "type": "object" }
+              }
+            },
+            
+            "maintenance_documentation": {
+              "type": "object",
+              "properties": {
+                "troubleshooting_guide": { "type": "object" },
+                "common_issues": { "type": "array", "items": { "type": "object" } },
+                "update_procedures": { "type": "object" },
+                "backup_strategy": { "type": "object" },
+                "monitoring_alerts": { "type": "array", "items": { "type": "object" } },
+                "support_contacts": { "type": "array", "items": { "type": "object" } }
+              }
+            },
+            
+            "appendices": {
+              "type": "object",
+              "properties": {
+                "glossary": { "type": "object" },
+                "references": { "type": "array", "items": { "type": "object" } },
+                "code_samples": { "type": "array", "items": { "type": "object" } },
+                "configuration_files": { "type": "array", "items": { "type": "object" } },
+                "licenses": { "type": "array", "items": { "type": "object" } }
+              }
+            }
+          }
+        },
+        
+        "deliverables": {
+          "type": "object",
+          "properties": {
+            "source_code": {
+              "type": "object",
+              "properties": {
+                "repository_url": { "type": "string" },
+                "branch": { "type": "string" },
+                "commit_hash": { "type": "string" },
+                "readme": { "type": "string" }
+              }
+            },
+            "documentation_site": {
+              "type": "object",
+              "properties": {
+                "url": { "type": "string" },
+                "platform": { "type": "string" },
+                "search_enabled": { "type": "boolean" },
+                "versioning": { "type": "boolean" }
+              }
+            },
+            "api_documentation": {
+              "type": "object",
+              "properties": {
+                "swagger_url": { "type": "string" },
+                "postman_collection": { "type": "string" },
+                "graphql_schema": { "type": "string" }
+              }
+            },
+            "design_assets": {
+              "type": "object",
+              "properties": {
+                "figma_url": { "type": "string" },
+                "storybook_url": { "type": "string" },
+                "assets_folder": { "type": "string" }
+              }
+            },
+            "deployment_artifacts": {
+              "type": "object",
+              "properties": {
+                "docker_images": { "type": "array", "items": { "type": "string" } },
+                "kubernetes_manifests": { "type": "string" },
+                "terraform_modules": { "type": "string" },
+                "ci_cd_configs": { "type": "object" }
+              }
+            }
+          }
+        },
+        
+        "project_metrics": {
+          "type": "object",
+          "properties": {
+            "completion_percentage": { "type": "number", "minimum": 0, "maximum": 100 },
+            "quality_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "timeline_adherence": { "type": "number", "minimum": 0, "maximum": 100 },
+            "budget_utilization": { "type": "number", "minimum": 0, "maximum": 100 },
+            "risk_score": { "type": "number", "minimum": 0, "maximum": 100 },
+            "technical_debt": { "type": "object" },
+            "performance_metrics": { "type": "object" }
+          }
+        },
+        
+        "next_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "action": { "type": "string" },
+              "priority": { "enum": ["critical", "high", "medium", "low"] },
+              "owner": { "type": "string" },
+              "deadline": { "type": "string", "format": "date" },
+              "dependencies": { "type": "array", "items": { "type": "string" } },
+              "estimated_effort": { "type": "string" }
+            }
+          }
+        },
+        
+        "release_notes": {
+          "type": "object",
+          "properties": {
+            "version": { "type": "string" },
+            "release_date": { "type": "string", "format": "date" },
+            "new_features": { "type": "array", "items": { "type": "object" } },
+            "improvements": { "type": "array", "items": { "type": "object" } },
+            "bug_fixes": { "type": "array", "items": { "type": "object" } },
+            "breaking_changes": { "type": "array", "items": { "type": "object" } },
+            "deprecations": { "type": "array", "items": { "type": "object" } },
+            "known_issues": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        
+        "stakeholder_communications": {
+          "type": "object",
+          "properties": {
+            "email_template": { "type": "string" },
+            "presentation_deck": { "type": "string" },
+            "demo_video": { "type": "string" },
+            "faq": { "type": "array", "items": { "type": "object" } },
+            "training_materials": { "type": "array", "items": { "type": "object" } }
+          }
+        },
+        
+        "validation_results": {
+          "type": "object",
+          "properties": {
+            "completeness": {
+              "type": "object",
+              "properties": {
+                "all_sections_present": { "type": "boolean" },
+                "missing_sections": { "type": "array", "items": { "type": "string" } }
+              }
+            },
+            "consistency": {
+              "type": "object",
+              "properties": {
+                "cross_references_valid": { "type": "boolean" },
+                "terminology_consistent": { "type": "boolean" },
+                "version_numbers_match": { "type": "boolean" }
+              }
+            },
+            "quality": {
+              "type": "object",
+              "properties": {
+                "grammar_score": { "type": "number" },
+                "readability_score": { "type": "number" },
+                "technical_accuracy": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      },
+      "required": ["final_report", "deliverables", "project_metrics", "next_steps"]
+    }
+  },
+  "required": ["metadata", "input", "output"]
+}
