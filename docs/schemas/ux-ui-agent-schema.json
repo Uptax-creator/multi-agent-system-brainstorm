@@ -1,0 +1,823 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "UX/UI Agent Schema",
+  "description": "Complete schema for design system, visual identity, and frontend components with tool references",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "agent_type": { "const": "ux_ui_agent" },
+        "version": { "type": "string", "default": "1.0.0" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "task_id": { "type": "string" },
+        "project_context": { "type": "string" }
+      },
+      "required": ["agent_type", "version", "timestamp", "task_id"]
+    },
+    
+    "tools_and_libraries": {
+      "type": "object",
+      "description": "Reference libraries and tools for the agent to use",
+      "properties": {
+        "component_libraries": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "enum": ["ui_components", "design_system", "animation", "icons"] },
+              "url": { "type": "string" },
+              "recommended_for": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "shadcn/ui",
+              "type": "ui_components",
+              "url": "https://ui.shadcn.com",
+              "recommended_for": ["modern_react", "tailwind", "accessible", "customizable"]
+            },
+            {
+              "name": "Radix UI",
+              "type": "ui_components",
+              "url": "https://www.radix-ui.com",
+              "recommended_for": ["accessibility", "headless_components", "primitive_building_blocks"]
+            },
+            {
+              "name": "Material UI (MUI)",
+              "type": "design_system",
+              "url": "https://mui.com",
+              "recommended_for": ["enterprise", "complete_system", "google_design"]
+            },
+            {
+              "name": "Ant Design",
+              "type": "design_system",
+              "url": "https://ant.design",
+              "recommended_for": ["enterprise", "data_heavy", "admin_panels"]
+            },
+            {
+              "name": "Chakra UI",
+              "type": "design_system",
+              "url": "https://chakra-ui.com",
+              "recommended_for": ["modular", "themeable", "simple_api"]
+            },
+            {
+              "name": "Mantine",
+              "type": "design_system",
+              "url": "https://mantine.dev",
+              "recommended_for": ["full_featured", "hooks", "forms"]
+            },
+            {
+              "name": "NextUI",
+              "type": "ui_components",
+              "url": "https://nextui.org",
+              "recommended_for": ["modern", "beautiful", "nextjs"]
+            },
+            {
+              "name": "Framer Motion",
+              "type": "animation",
+              "url": "https://www.framer.com/motion",
+              "recommended_for": ["animations", "gestures", "transitions"]
+            },
+            {
+              "name": "Lucide Icons",
+              "type": "icons",
+              "url": "https://lucide.dev",
+              "recommended_for": ["consistent_icons", "customizable", "tree_shakeable"]
+            },
+            {
+              "name": "Heroicons",
+              "type": "icons",
+              "url": "https://heroicons.com",
+              "recommended_for": ["tailwind", "svg_icons", "simple"]
+            }
+          ]
+        },
+        
+        "documentation_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "purpose": { "type": "string" },
+              "integration": { "type": "string" }
+            }
+          },
+          "default": [
+            {
+              "name": "Context7",
+              "purpose": "Library documentation and code examples",
+              "integration": "API for fetching latest docs and patterns"
+            },
+            {
+              "name": "Storybook",
+              "purpose": "Component documentation and testing",
+              "integration": "Interactive component explorer"
+            },
+            {
+              "name": "Docusaurus",
+              "purpose": "Documentation website",
+              "integration": "Markdown-based docs"
+            }
+          ]
+        },
+        
+        "styling_frameworks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "enum": ["utility", "css_in_js", "preprocessor", "component"] },
+              "benefits": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Tailwind CSS",
+              "type": "utility",
+              "benefits": ["rapid_development", "consistent_spacing", "responsive_utilities"]
+            },
+            {
+              "name": "Styled Components",
+              "type": "css_in_js",
+              "benefits": ["component_scoped", "dynamic_styles", "typescript_support"]
+            },
+            {
+              "name": "Emotion",
+              "type": "css_in_js",
+              "benefits": ["performance", "ssr_support", "css_prop"]
+            },
+            {
+              "name": "CSS Modules",
+              "type": "component",
+              "benefits": ["local_scope", "no_runtime", "css_standard"]
+            },
+            {
+              "name": "Vanilla Extract",
+              "type": "css_in_js",
+              "benefits": ["zero_runtime", "type_safe", "modern"]
+            }
+          ]
+        },
+        
+        "design_references": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "url": { "type": "string" },
+              "category": { "type": "string" }
+            }
+          },
+          "default": [
+            {
+              "name": "Material Design 3",
+              "url": "https://m3.material.io",
+              "category": "design_system"
+            },
+            {
+              "name": "Apple Human Interface Guidelines",
+              "url": "https://developer.apple.com/design",
+              "category": "design_principles"
+            },
+            {
+              "name": "IBM Carbon Design System",
+              "url": "https://carbondesignsystem.com",
+              "category": "enterprise_design"
+            },
+            {
+              "name": "Atlassian Design System",
+              "url": "https://atlassian.design",
+              "category": "product_design"
+            },
+            {
+              "name": "Vercel Design",
+              "url": "https://vercel.com/design",
+              "category": "modern_design"
+            }
+          ]
+        },
+        
+        "accessibility_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "purpose": { "type": "string" }
+            }
+          },
+          "default": [
+            {
+              "name": "axe DevTools",
+              "purpose": "Automated accessibility testing"
+            },
+            {
+              "name": "WAVE",
+              "purpose": "Web accessibility evaluation"
+            },
+            {
+              "name": "React Aria",
+              "purpose": "Accessible React hooks"
+            },
+            {
+              "name": "Reach UI",
+              "purpose": "Accessible React components"
+            }
+          ]
+        },
+        
+        "prototyping_tools": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { "enum": ["design", "code", "collaboration"] },
+              "export_formats": { "type": "array", "items": { "type": "string" } }
+            }
+          },
+          "default": [
+            {
+              "name": "Figma",
+              "type": "design",
+              "export_formats": ["svg", "png", "css", "react"]
+            },
+            {
+              "name": "Penpot",
+              "type": "design",
+              "export_formats": ["svg", "png", "css"]
+            },
+            {
+              "name": "Excalidraw",
+              "type": "design",
+              "export_formats": ["svg", "png"]
+            },
+            {
+              "name": "v0.dev",
+              "type": "code",
+              "export_formats": ["react", "html", "tailwind"]
+            }
+          ]
+        }
+      }
+    },
+    
+    "input": {
+      "type": "object",
+      "properties": {
+        "requirements": {
+          "type": "object",
+          "properties": {
+            "functional": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "non_functional": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "accessibility": {
+              "type": "object",
+              "properties": {
+                "wcag_level": { "enum": ["A", "AA", "AAA"] },
+                "screen_reader_support": { "type": "boolean" },
+                "keyboard_navigation": { "type": "boolean" },
+                "color_contrast_ratio": { "type": "string" }
+              }
+            },
+            "performance": {
+              "type": "object",
+              "properties": {
+                "lighthouse_score_target": { "type": "integer", "minimum": 0, "maximum": 100 },
+                "bundle_size_limit": { "type": "string" },
+                "first_contentful_paint": { "type": "string" }
+              }
+            }
+          }
+        },
+        "user_persona": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "age_range": { "type": "string" },
+              "tech_level": { "enum": ["beginner", "intermediate", "advanced"] },
+              "goals": { "type": "array", "items": { "type": "string" } },
+              "pain_points": { "type": "array", "items": { "type": "string" } },
+              "devices": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "brand_guidelines": {
+          "type": "object",
+          "properties": {
+            "existing": { "type": "boolean" },
+            "reference_urls": { "type": "array", "items": { "type": "string" } },
+            "tone": { "type": "array", "items": { "type": "string" } },
+            "competitors": { "type": "array", "items": { "type": "string" } },
+            "inspiration": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "technical_constraints": {
+          "type": "object",
+          "properties": {
+            "framework": { "type": "string" },
+            "browser_support": { "type": "array", "items": { "type": "string" } },
+            "device_support": { "type": "array", "items": { "type": "string" } },
+            "existing_codebase": { "type": "boolean" }
+          }
+        }
+      },
+      "required": ["requirements", "user_persona"]
+    },
+    
+    "output": {
+      "type": "object",
+      "properties": {
+        "selected_tools": {
+          "type": "object",
+          "description": "Tools and libraries selected for this project",
+          "properties": {
+            "component_library": { "type": "string" },
+            "styling_framework": { "type": "string" },
+            "icon_library": { "type": "string" },
+            "animation_library": { "type": "string" },
+            "documentation_tool": { "type": "string" },
+            "justification": { "type": "string" }
+          }
+        },
+        
+        "brand_identity": {
+          "type": "object",
+          "properties": {
+            "logo": {
+              "type": "object",
+              "properties": {
+                "primary": {
+                  "type": "object",
+                  "properties": {
+                    "svg_code": { "type": "string" },
+                    "variations": {
+                      "type": "object",
+                      "properties": {
+                        "horizontal": { "type": "string" },
+                        "vertical": { "type": "string" },
+                        "icon_only": { "type": "string" },
+                        "wordmark": { "type": "string" }
+                      }
+                    }
+                  }
+                },
+                "usage_guidelines": {
+                  "type": "object",
+                  "properties": {
+                    "min_size": { "type": "string" },
+                    "clear_space": { "type": "string" },
+                    "dont_examples": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            },
+            "color_palette": {
+              "type": "object",
+              "properties": {
+                "primary": {
+                  "type": "object",
+                  "properties": {
+                    "main": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "light": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "dark": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "contrast_text": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                  }
+                },
+                "secondary": {
+                  "type": "object",
+                  "properties": {
+                    "main": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "light": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "dark": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                  }
+                },
+                "semantic": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "warning": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "error": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "info": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                  }
+                },
+                "neutral": {
+                  "type": "object",
+                  "properties": {
+                    "50": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "100": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "200": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "300": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "400": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "500": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "600": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "700": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "800": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" },
+                    "900": { "type": "string", "pattern": "^#[0-9A-Fa-f]{6}$" }
+                  }
+                }
+              }
+            },
+            "typography": {
+              "type": "object",
+              "properties": {
+                "font_families": {
+                  "type": "object",
+                  "properties": {
+                    "primary": { "type": "string" },
+                    "secondary": { "type": "string" },
+                    "monospace": { "type": "string" }
+                  }
+                },
+                "scale": {
+                  "type": "object",
+                  "properties": {
+                    "xs": { "type": "string" },
+                    "sm": { "type": "string" },
+                    "base": { "type": "string" },
+                    "lg": { "type": "string" },
+                    "xl": { "type": "string" },
+                    "2xl": { "type": "string" },
+                    "3xl": { "type": "string" },
+                    "4xl": { "type": "string" },
+                    "5xl": { "type": "string" }
+                  }
+                },
+                "line_heights": {
+                  "type": "object",
+                  "properties": {
+                    "tight": { "type": "number" },
+                    "normal": { "type": "number" },
+                    "relaxed": { "type": "number" }
+                  }
+                }
+              }
+            },
+            "spacing": {
+              "type": "object",
+              "properties": {
+                "unit": { "type": "string", "default": "rem" },
+                "scale": {
+                  "type": "object",
+                  "properties": {
+                    "xs": { "type": "string" },
+                    "sm": { "type": "string" },
+                    "md": { "type": "string" },
+                    "lg": { "type": "string" },
+                    "xl": { "type": "string" },
+                    "2xl": { "type": "string" },
+                    "3xl": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "themes": {
+          "type": "object",
+          "properties": {
+            "light": {
+              "type": "object",
+              "properties": {
+                "background": {
+                  "type": "object",
+                  "properties": {
+                    "default": { "type": "string" },
+                    "paper": { "type": "string" },
+                    "elevated": { "type": "string" }
+                  }
+                },
+                "text": {
+                  "type": "object",
+                  "properties": {
+                    "primary": { "type": "string" },
+                    "secondary": { "type": "string" },
+                    "disabled": { "type": "string" }
+                  }
+                },
+                "divider": { "type": "string" },
+                "shadow": {
+                  "type": "object",
+                  "properties": {
+                    "sm": { "type": "string" },
+                    "md": { "type": "string" },
+                    "lg": { "type": "string" },
+                    "xl": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "dark": {
+              "type": "object",
+              "properties": {
+                "background": {
+                  "type": "object",
+                  "properties": {
+                    "default": { "type": "string" },
+                    "paper": { "type": "string" },
+                    "elevated": { "type": "string" }
+                  }
+                },
+                "text": {
+                  "type": "object",
+                  "properties": {
+                    "primary": { "type": "string" },
+                    "secondary": { "type": "string" },
+                    "disabled": { "type": "string" }
+                  }
+                },
+                "divider": { "type": "string" },
+                "shadow": {
+                  "type": "object",
+                  "properties": {
+                    "sm": { "type": "string" },
+                    "md": { "type": "string" },
+                    "lg": { "type": "string" },
+                    "xl": { "type": "string" }
+                  }
+                }
+              }
+            },
+            "system": {
+              "type": "object",
+              "properties": {
+                "use_system_preference": { "type": "boolean" },
+                "transition_duration": { "type": "string" }
+              }
+            }
+          }
+        },
+        
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "category": { 
+                "enum": ["navigation", "input", "display", "feedback", "layout", "data"] 
+              },
+              "library_reference": { "type": "string" },
+              "react_code": { "type": "string" },
+              "props": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string" },
+                    "required": { "type": "boolean" },
+                    "default": { "type": "string" },
+                    "description": { "type": "string" }
+                  }
+                }
+              },
+              "variants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "description": { "type": "string" },
+                    "code": { "type": "string" }
+                  }
+                }
+              },
+              "accessibility": {
+                "type": "object",
+                "properties": {
+                  "aria_labels": { "type": "array", "items": { "type": "string" } },
+                  "keyboard_shortcuts": { "type": "array", "items": { "type": "string" } },
+                  "focus_management": { "type": "string" },
+                  "screen_reader_text": { "type": "string" }
+                }
+              },
+              "storybook_story": { "type": "string" }
+            }
+          }
+        },
+        
+        "layouts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "type": { 
+                "enum": ["dashboard", "form", "list", "detail", "landing", "auth", "settings", "wizard"] 
+              },
+              "structure": {
+                "type": "object",
+                "properties": {
+                  "header": { "type": "boolean" },
+                  "sidebar": { 
+                    "type": "object",
+                    "properties": {
+                      "enabled": { "type": "boolean" },
+                      "position": { "enum": ["left", "right"] },
+                      "collapsible": { "type": "boolean" }
+                    }
+                  },
+                  "footer": { "type": "boolean" },
+                  "main_content": { "type": "string" }
+                }
+              },
+              "responsive_breakpoints": {
+                "type": "object",
+                "properties": {
+                  "mobile": { "type": "string" },
+                  "tablet": { "type": "string" },
+                  "desktop": { "type": "string" },
+                  "wide": { "type": "string" }
+                }
+              },
+              "grid_system": {
+                "type": "object",
+                "properties": {
+                  "columns": { "type": "integer" },
+                  "gap": { "type": "string" },
+                  "max_width": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        
+        "user_flows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "entry_point": { "type": "string" },
+              "success_criteria": { "type": "string" },
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "order": { "type": "integer" },
+                    "screen": { "type": "string" },
+                    "action": { "type": "string" },
+                    "validation": { "type": "string" },
+                    "next_step": { "type": "string" },
+                    "alternative_paths": { "type": "array", "items": { "type": "string" } }
+                  }
+                }
+              }
+            }
+          }
+        },
+        
+        "interaction_patterns": {
+          "type": "object",
+          "properties": {
+            "navigation": {
+              "type": "object",
+              "properties": {
+                "type": { "enum": ["top", "side", "bottom", "hamburger", "breadcrumb"] },
+                "behavior": { "enum": ["static", "sticky", "collapsible", "auto-hide"] },
+                "mobile_strategy": { "type": "string" }
+              }
+            },
+            "forms": {
+              "type": "object",
+              "properties": {
+                "validation": { "enum": ["inline", "on_submit", "on_blur", "debounced"] },
+                "error_display": { "enum": ["inline", "toast", "modal", "summary"] },
+                "success_feedback": { "type": "string" }
+              }
+            },
+            "feedback": {
+              "type": "object",
+              "properties": {
+                "success": { "enum": ["toast", "modal", "inline", "notification"] },
+                "error": { "enum": ["toast", "modal", "inline", "alert"] },
+                "loading": { "enum": ["spinner", "skeleton", "progress", "blur"] },
+                "empty_states": { "type": "string" }
+              }
+            },
+            "animations": {
+              "type": "object",
+              "properties": {
+                "page_transitions": { "type": "string" },
+                "micro_interactions": { "type": "string" },
+                "loading_states": { "type": "string" },
+                "gesture_responses": { "type": "string" }
+              }
+            }
+          }
+        },
+        
+        "implementation_guide": {
+          "type": "object",
+          "properties": {
+            "tech_stack": {
+              "type": "object",
+              "properties": {
+                "framework": { "type": "string" },
+                "ui_library": { "type": "string" },
+                "styling": { "type": "string" },
+                "state_management": { "type": "string" },
+                "routing": { "type": "string" },
+                "bundler": { "type": "string" }
+              }
+            },
+            "setup_instructions": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "folder_structure": {
+              "type": "string"
+            },
+            "code_examples": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "code": { "type": "string" },
+                  "dependencies": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            },
+            "integration_guides": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "service": { "type": "string" },
+                  "steps": { "type": "array", "items": { "type": "string" } }
+                }
+              }
+            }
+          }
+        },
+        
+        "validation_checklist": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "category": { 
+                "enum": ["accessibility", "performance", "responsive", "browser_compat", "user_testing"] 
+              },
+              "item": { "type": "string" },
+              "criteria": { "type": "string" },
+              "status": { "enum": ["passed", "failed", "pending", "not_applicable"] },
+              "notes": { "type": "string" },
+              "tool_used": { "type": "string" }
+            }
+          }
+        },
+        
+        "deliverables": {
+          "type": "object",
+          "properties": {
+            "design_tokens": {
+              "type": "object",
+              "properties": {
+                "css_variables": { "type": "string" },
+                "json_tokens": { "type": "string" },
+                "scss_variables": { "type": "string" }
+              }
+            },
+            "component_library": {
+              "type": "object",
+              "properties": {
+                "repository_url": { "type": "string" },
+                "npm_package": { "type": "string" },
+                "storybook_url": { "type": "string" }
+              }
+            },
+            "documentation": {
+              "type": "object",
+              "properties": {
+                "design_system_url": { "type": "string" },
+                "figma_file": { "type": "string" },
+                "style_guide": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "required": ["selected_tools", "brand_identity", "themes", "components", "layouts"]
+    }
+  },
+  "required": ["metadata", "input", "output"]
+}
