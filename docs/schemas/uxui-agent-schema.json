@@ -1,0 +1,701 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://multi-agent-system/uxui-agent",
+  "title": "UX/UI Design Agent Schema",
+  "description": "Schema for User Experience and Interface Design Agent with brand identity and component system",
+  "version": "1.0.0",
+  
+  "type": "object",
+  
+  "properties": {
+    "request": {
+      "type": "object",
+      "required": ["requirements", "user_persona", "brand_identity"],
+      "properties": {
+        "requirements": {
+          "type": "object",
+          "required": ["features", "user_goals"],
+          "properties": {
+            "features": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "description": {"type": "string"},
+                  "priority": {
+                    "type": "string",
+                    "enum": ["must-have", "should-have", "nice-to-have"]
+                  },
+                  "user_story": {"type": "string"}
+                }
+              }
+            },
+            "user_goals": {
+              "type": "array",
+              "items": {"type": "string"}
+            },
+            "accessibility_level": {
+              "type": "string",
+              "enum": ["WCAG_A", "WCAG_AA", "WCAG_AAA"],
+              "default": "WCAG_AA"
+            },
+            "responsive_breakpoints": {
+              "type": "object",
+              "properties": {
+                "mobile": {"type": "string", "default": "320px"},
+                "tablet": {"type": "string", "default": "768px"},
+                "desktop": {"type": "string", "default": "1024px"},
+                "wide": {"type": "string", "default": "1440px"}
+              }
+            }
+          }
+        },
+        "user_persona": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "role", "goals", "pain_points"],
+            "properties": {
+              "name": {"type": "string"},
+              "role": {"type": "string"},
+              "age_range": {"type": "string"},
+              "tech_level": {
+                "type": "string",
+                "enum": ["beginner", "intermediate", "advanced"]
+              },
+              "goals": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "pain_points": {
+                "type": "array",
+                "items": {"type": "string"}
+              },
+              "preferred_devices": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["smartphone", "tablet", "laptop", "desktop"]
+                }
+              }
+            }
+          }
+        },
+        "brand_identity": {
+          "type": "object",
+          "required": ["name", "mission", "values", "personality"],
+          "properties": {
+            "name": {"type": "string"},
+            "tagline": {"type": "string"},
+            "mission": {"type": "string"},
+            "vision": {"type": "string"},
+            "values": {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 3,
+              "maxItems": 7
+            },
+            "personality": {
+              "type": "object",
+              "properties": {
+                "tone": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "enum": ["formal", "casual", "friendly", "professional", "playful", "serious", "innovative", "traditional"]
+                  }
+                },
+                "voice": {
+                  "type": "object",
+                  "properties": {
+                    "characteristics": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    },
+                    "examples": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            },
+            "target_audience": {
+              "type": "object",
+              "properties": {
+                "primary": {"type": "string"},
+                "secondary": {"type": "string"},
+                "demographics": {
+                  "type": "object",
+                  "properties": {
+                    "age": {"type": "string"},
+                    "location": {"type": "string"},
+                    "interests": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "platform": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["web", "mobile-ios", "mobile-android", "tablet", "desktop", "pwa"]
+          }
+        }
+      }
+    },
+    
+    "response": {
+      "type": "object",
+      "required": ["brand_design", "design_system", "components", "wireframes", "flows"],
+      "properties": {
+        "brand_design": {
+          "type": "object",
+          "required": ["logo", "color_palette", "typography"],
+          "properties": {
+            "logo": {
+              "type": "object",
+              "required": ["primary", "variations", "usage_guidelines"],
+              "properties": {
+                "primary": {
+                  "type": "object",
+                  "properties": {
+                    "svg_url": {"type": "string", "format": "uri"},
+                    "description": {"type": "string"},
+                    "concept": {"type": "string"}
+                  }
+                },
+                "variations": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "enum": ["icon", "wordmark", "horizontal", "vertical", "monochrome"]
+                      },
+                      "svg_url": {"type": "string", "format": "uri"},
+                      "use_case": {"type": "string"}
+                    }
+                  }
+                },
+                "usage_guidelines": {
+                  "type": "object",
+                  "properties": {
+                    "minimum_size": {"type": "string"},
+                    "clear_space": {"type": "string"},
+                    "dos": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    },
+                    "donts": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    }
+                  }
+                }
+              }
+            },
+            "color_palette": {
+              "type": "object",
+              "required": ["primary", "secondary", "neutral", "semantic"],
+              "properties": {
+                "primary": {
+                  "type": "object",
+                  "properties": {
+                    "main": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "light": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "dark": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "contrast": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+                  }
+                },
+                "secondary": {
+                  "type": "object",
+                  "properties": {
+                    "main": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "light": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "dark": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "contrast": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+                  }
+                },
+                "accent": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {"type": "string"},
+                      "hex": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                      "usage": {"type": "string"}
+                    }
+                  }
+                },
+                "neutral": {
+                  "type": "object",
+                  "properties": {
+                    "white": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray100": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray200": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray300": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray400": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray500": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray600": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray700": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray800": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "gray900": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "black": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+                  }
+                },
+                "semantic": {
+                  "type": "object",
+                  "properties": {
+                    "success": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "warning": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "error": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+                    "info": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}
+                  }
+                }
+              }
+            },
+            "typography": {
+              "type": "object",
+              "required": ["font_families", "scale"],
+              "properties": {
+                "font_families": {
+                  "type": "object",
+                  "properties": {
+                    "primary": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "fallback": {"type": "string"},
+                        "weights": {
+                          "type": "array",
+                          "items": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "secondary": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "fallback": {"type": "string"},
+                        "weights": {
+                          "type": "array",
+                          "items": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "monospace": {
+                      "type": "object",
+                      "properties": {
+                        "name": {"type": "string"},
+                        "fallback": {"type": "string"}
+                      }
+                    }
+                  }
+                },
+                "scale": {
+                  "type": "object",
+                  "properties": {
+                    "h1": {"type": "string"},
+                    "h2": {"type": "string"},
+                    "h3": {"type": "string"},
+                    "h4": {"type": "string"},
+                    "h5": {"type": "string"},
+                    "h6": {"type": "string"},
+                    "body": {"type": "string"},
+                    "small": {"type": "string"},
+                    "caption": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "design_system": {
+          "type": "object",
+          "required": ["themes", "spacing", "shadows", "borders", "animations"],
+          "properties": {
+            "themes": {
+              "type": "object",
+              "required": ["light", "dark"],
+              "properties": {
+                "light": {
+                  "type": "object",
+                  "properties": {
+                    "background": {
+                      "type": "object",
+                      "properties": {
+                        "default": {"type": "string"},
+                        "paper": {"type": "string"},
+                        "overlay": {"type": "string"}
+                      }
+                    },
+                    "text": {
+                      "type": "object",
+                      "properties": {
+                        "primary": {"type": "string"},
+                        "secondary": {"type": "string"},
+                        "disabled": {"type": "string"},
+                        "hint": {"type": "string"}
+                      }
+                    },
+                    "divider": {"type": "string"},
+                    "action": {
+                      "type": "object",
+                      "properties": {
+                        "active": {"type": "string"},
+                        "hover": {"type": "string"},
+                        "selected": {"type": "string"},
+                        "disabled": {"type": "string"},
+                        "focus": {"type": "string"}
+                      }
+                    }
+                  }
+                },
+                "dark": {
+                  "type": "object",
+                  "properties": {
+                    "background": {
+                      "type": "object",
+                      "properties": {
+                        "default": {"type": "string"},
+                        "paper": {"type": "string"},
+                        "overlay": {"type": "string"}
+                      }
+                    },
+                    "text": {
+                      "type": "object",
+                      "properties": {
+                        "primary": {"type": "string"},
+                        "secondary": {"type": "string"},
+                        "disabled": {"type": "string"},
+                        "hint": {"type": "string"}
+                      }
+                    },
+                    "divider": {"type": "string"},
+                    "action": {
+                      "type": "object",
+                      "properties": {
+                        "active": {"type": "string"},
+                        "hover": {"type": "string"},
+                        "selected": {"type": "string"},
+                        "disabled": {"type": "string"},
+                        "focus": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "spacing": {
+              "type": "object",
+              "properties": {
+                "base": {"type": "integer", "default": 8},
+                "scale": {
+                  "type": "array",
+                  "items": {"type": "string"}
+                }
+              }
+            },
+            "shadows": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {"type": "string"},
+                  "value": {"type": "string"}
+                }
+              }
+            },
+            "borders": {
+              "type": "object",
+              "properties": {
+                "radius": {
+                  "type": "object",
+                  "properties": {
+                    "none": {"type": "string"},
+                    "sm": {"type": "string"},
+                    "md": {"type": "string"},
+                    "lg": {"type": "string"},
+                    "xl": {"type": "string"},
+                    "full": {"type": "string"}
+                  }
+                },
+                "width": {
+                  "type": "object",
+                  "properties": {
+                    "thin": {"type": "string"},
+                    "medium": {"type": "string"},
+                    "thick": {"type": "string"}
+                  }
+                }
+              }
+            },
+            "animations": {
+              "type": "object",
+              "properties": {
+                "durations": {
+                  "type": "object",
+                  "properties": {
+                    "instant": {"type": "string"},
+                    "fast": {"type": "string"},
+                    "normal": {"type": "string"},
+                    "slow": {"type": "string"}
+                  }
+                },
+                "easings": {
+                  "type": "object",
+                  "properties": {
+                    "linear": {"type": "string"},
+                    "ease-in": {"type": "string"},
+                    "ease-out": {"type": "string"},
+                    "ease-in-out": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "category", "description", "props", "variants"],
+            "properties": {
+              "name": {"type": "string"},
+              "category": {
+                "type": "string",
+                "enum": ["input", "display", "navigation", "feedback", "layout", "utility"]
+              },
+              "description": {"type": "string"},
+              "props": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "type": {"type": "string"},
+                    "required": {"type": "boolean"},
+                    "default": {},
+                    "description": {"type": "string"}
+                  }
+                }
+              },
+              "variants": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "description": {"type": "string"},
+                    "preview_url": {"type": "string", "format": "uri"}
+                  }
+                }
+              },
+              "states": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["default", "hover", "active", "focus", "disabled", "loading", "error", "success"]
+                }
+              },
+              "accessibility": {
+                "type": "object",
+                "properties": {
+                  "aria_attributes": {
+                    "type": "array",
+                    "items": {"type": "string"}
+                  },
+                  "keyboard_nav": {
+                    "type": "object",
+                    "properties": {
+                      "tab": {"type": "string"},
+                      "enter": {"type": "string"},
+                      "escape": {"type": "string"},
+                      "arrows": {"type": "string"}
+                    }
+                  },
+                  "screen_reader_text": {"type": "string"},
+                  "contrast_ratio": {"type": "string"}
+                }
+              },
+              "code_snippet": {
+                "type": "object",
+                "properties": {
+                  "react": {"type": "string"},
+                  "vue": {"type": "string"},
+                  "angular": {"type": "string"},
+                  "html": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "wireframes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["screen_name", "purpose", "layout"],
+            "properties": {
+              "screen_name": {"type": "string"},
+              "purpose": {"type": "string"},
+              "layout": {
+                "type": "string",
+                "enum": ["single-column", "two-column", "three-column", "grid", "masonry", "hero", "dashboard"]
+              },
+              "sections": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {"type": "string"},
+                    "type": {
+                      "type": "string",
+                      "enum": ["header", "navigation", "hero", "content", "sidebar", "footer", "modal", "drawer"]
+                    },
+                    "components_used": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    }
+                  }
+                }
+              },
+              "mockup_url": {"type": "string", "format": "uri"},
+              "annotations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "element": {"type": "string"},
+                    "note": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "flows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "type", "steps"],
+            "properties": {
+              "name": {"type": "string"},
+              "type": {
+                "type": "string",
+                "enum": ["user-journey", "task-flow", "interaction-flow", "navigation-flow"]
+              },
+              "persona": {"type": "string"},
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "step_number": {"type": "integer"},
+                    "screen": {"type": "string"},
+                    "action": {"type": "string"},
+                    "decision_point": {"type": "boolean"},
+                    "branches": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "condition": {"type": "string"},
+                          "next_step": {"type": "integer"}
+                        }
+                      }
+                    },
+                    "components_involved": {
+                      "type": "array",
+                      "items": {"type": "string"}
+                    },
+                    "expected_outcome": {"type": "string"}
+                  }
+                }
+              },
+              "success_metrics": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        },
+        "interaction_patterns": {
+          "type": "object",
+          "properties": {
+            "navigation": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["top-nav", "side-nav", "bottom-nav", "hamburger", "tab-bar"]
+                },
+                "structure": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "label": {"type": "string"},
+                      "icon": {"type": "string"},
+                      "children": {
+                        "type": "array",
+                        "items": {"type": "object"}
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "forms": {
+              "type": "object",
+              "properties": {
+                "validation": {
+                  "type": "string",
+                  "enum": ["inline", "on-submit", "on-blur"]
+                },
+                "error_handling": {
+                  "type": "string",
+                  "enum": ["inline", "toast", "modal", "summary"]
+                },
+                "submission_feedback": {
+                  "type": "string",
+                  "enum": ["loading-state", "success-message", "redirect", "modal"]
+                }
+              }
+            },
+            "feedback": {
+              "type": "object",
+              "properties": {
+                "notifications": {
+                  "type": "string",
+                  "enum": ["toast", "banner", "modal", "inline"]
+                },
+                "loading": {
+                  "type": "string",
+                  "enum": ["spinner", "skeleton", "progress-bar", "shimmer"]
+                },
+                "empty_states": {
+                  "type": "object",
+                  "properties": {
+                    "illustration": {"type": "boolean"},
+                    "message": {"type": "string"},
+                    "action": {"type": "string"}
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
